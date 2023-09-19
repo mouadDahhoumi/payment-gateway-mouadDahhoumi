@@ -1,10 +1,14 @@
 package com.processout.payment.gateway.controller;
 
+import com.processout.payment.gateway.dto.GetTransactionResponse;
+import com.processout.payment.gateway.dto.MerchantIdRequestBody;
 import com.processout.payment.gateway.dto.SubmitPaymentRequestBody;
+import com.processout.payment.gateway.dto.SubmitPaymentResponse;
 import com.processout.payment.gateway.model.*;
 import com.processout.payment.gateway.service.IMerchantService;
 import com.processout.payment.gateway.service.ITransactionService;
 
+import com.processout.payment.gateway.utils.Utils;
 import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-
-import static com.processout.payment.gateway.model.TransactionStatus.PENDING;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -36,68 +37,69 @@ public class TransactionController {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @PostMapping("/submit/{merchantId}")
-    public ResponseEntity<TransactionStatus> submitTransaction(@PathVariable Long merchantId, @RequestBody @Valid SubmitPaymentRequestBody body) {
-        Merchant merchant = merchantService.getMerchantById(merchantId);
-        if (merchant == null || !body.getMerchantId().equals(merchantId)) {
+    @PostMapping()
+    public ResponseEntity<SubmitPaymentResponse> submitTransaction(@RequestBody @Valid SubmitPaymentRequestBody body) {
+        Merchant merchant = merchantService.getMerchantById(body.getMerchantId());
+        if (merchant == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        CardDetails cardDetails = extractCardDetails(body);
-        Transaction submittedTransaction = Transaction.builder().amount(body.getAmount()).merchant(merchant).cardDetails(cardDetails).status(PENDING).submissionDate(new Date()).currency(body.getCurrency()).build();
+        CardDetails cardDetails = Utils.extractCardDetails(body);
+        Transaction submittedTransaction = Utils.mapSubmitRequestBodyToTransaction(body, merchant, cardDetails);
         Transaction savedTransaction = transactionService.saveTransaction(submittedTransaction);
         rabbitTemplate.convertAndSend(topic, savedTransaction);
-        return ResponseEntity.ok(submittedTransaction.getStatus());
+        return ResponseEntity.ok(SubmitPaymentResponse.builder().transactionId(savedTransaction.getId()).status(savedTransaction.getStatus()).build());
     }
 
-
-    @GetMapping("/merchant/{merchantId}")
-    public ResponseEntity<List<Transaction>> getTransactionsByMerchantId(@PathVariable Long merchantId) {
-        List<Transaction> transactions = transactionService.findAllTransactionsByMerchantId(merchantId);
+    @GetMapping()
+    public ResponseEntity<List<GetTransactionResponse>> getTransactionsByMerchantId(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        List<Transaction> transactions = transactionService.findAllTransactionsByMerchantId(merchant.getMerchantId());
         if (transactions.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(transactions);
+        return ResponseEntity.ok(transactions.stream().map(Utils::mapTransactionToGetTransactionResponse).toList());
     }
 
-    @GetMapping("/merchant/{merchantId}/transaction/{transactionId}")
-    public ResponseEntity<Transaction> getTransactionByIdAndMerchantId(@PathVariable Long merchantId, @PathVariable Long transactionId) {
-        Transaction transaction = transactionService.findTransactionByIdAndMerchantId(transactionId, merchantId);
+    @GetMapping("/{transactionId}")
+    public ResponseEntity<GetTransactionResponse> getTransactionByIdAndMerchantId(@RequestBody @Valid MerchantIdRequestBody merchant, @PathVariable Long transactionId) {
+        Transaction transaction = transactionService.findTransactionByIdAndMerchantId(transactionId, merchant.getMerchantId());
         if (transaction == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(transaction);
+
+        GetTransactionResponse getTransactionResponse = Utils.mapTransactionToGetTransactionResponse(transaction);
+        return ResponseEntity.ok(getTransactionResponse);
     }
 
-    @GetMapping("/merchant/{merchantId}/pending")
-    public ResponseEntity<List<Transaction>> getAllPendingTransactions(@PathVariable Long merchantId) {
-        List<Transaction> pendingTransactions = transactionService.getAllPendingTransactions(merchantId);
+    @GetMapping("/pending")
+    public ResponseEntity<List<GetTransactionResponse>> getAllPendingTransactions(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        Long merchantId = merchant.getMerchantId();
+        List<GetTransactionResponse> pendingTransactions = transactionService.getAllPendingTransactions(merchantId).stream().map(Utils::mapTransactionToGetTransactionResponse).toList();
         return ResponseEntity.ok(pendingTransactions);
     }
 
-    @GetMapping("/merchant/{merchantId}/accepted")
-    public ResponseEntity<List<Transaction>> getAllAcceptedTransactions(@PathVariable Long merchantId) {
-        List<Transaction> pendingTransactions = transactionService.getAllAcceptedTransactions(merchantId);
+    @GetMapping("/accepted")
+    public ResponseEntity<List<GetTransactionResponse>> getAllAcceptedTransactions(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        Long merchantId = merchant.getMerchantId();
+        List<GetTransactionResponse> pendingTransactions = transactionService.getAllAcceptedTransactions(merchantId).stream().map(Utils::mapTransactionToGetTransactionResponse).toList();
         return ResponseEntity.ok(pendingTransactions);
     }
 
-    @GetMapping("/merchant/{merchantId}/declined")
-    public ResponseEntity<List<Transaction>> getAllDeclinedTransactions(@PathVariable Long merchantId) {
-        List<Transaction> pendingTransactions = transactionService.getAllDeclinedTransactions(merchantId);
+    @GetMapping("/declined")
+    public ResponseEntity<List<GetTransactionResponse>> getAllDeclinedTransactions(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        Long merchantId = merchant.getMerchantId();
+        List<GetTransactionResponse> pendingTransactions = transactionService.getAllDeclinedTransactions(merchantId).stream().map(Utils::mapTransactionToGetTransactionResponse).toList();
+        ;
         return ResponseEntity.ok(pendingTransactions);
     }
 
-    @GetMapping("/merchant/{merchantId}/revenue")
-    public ResponseEntity<Double> getRevenue(@PathVariable Long merchantId) {
-        return ResponseEntity.ok(transactionService.calculateRevenue(merchantId));
+    @GetMapping("/revenue")
+    public ResponseEntity<Double> getRevenue(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        return ResponseEntity.ok(transactionService.calculateRevenue(merchant.getMerchantId()));
     }
 
-    @GetMapping("/merchant/{merchantId}/bank-approval-rate")
-    public ResponseEntity<Double> getBankApprovalRate(@PathVariable Long merchantId) {
-        return ResponseEntity.ok(transactionService.calculateApprovalRate(merchantId));
-    }
-
-    private CardDetails extractCardDetails(SubmitPaymentRequestBody body) {
-        return CardDetails.builder().ccv(body.getCcv()).cardNumber(body.getCardNumber()).expiryMonth(body.getExpiryMonth()).expiryYear(body.getExpiryYear()).owner(body.getOwner()).build();
+    @GetMapping("/bank-approval-rate")
+    public ResponseEntity<Double> getBankApprovalRate(@RequestBody @Valid MerchantIdRequestBody merchant) {
+        return ResponseEntity.ok(transactionService.calculateApprovalRate(merchant.getMerchantId()));
     }
 }

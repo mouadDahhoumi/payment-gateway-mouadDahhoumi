@@ -1,6 +1,7 @@
 package com.processout.payment.gateway.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,5 +20,6 @@ public class Merchant implements Serializable {
     private long id;
 
     @Column(name = "name")
+    @NotBlank
     private String name;
 }

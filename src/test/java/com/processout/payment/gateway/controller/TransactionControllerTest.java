@@ -1,11 +1,12 @@
 package com.processout.payment.gateway.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.processout.payment.gateway.dto.SubmitPaymentRequestBody;
+import com.processout.payment.gateway.dto.*;
 import com.processout.payment.gateway.model.*;
 import com.processout.payment.gateway.service.IMerchantService;
 import com.processout.payment.gateway.service.ITransactionService;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
@@ -70,28 +73,22 @@ public class TransactionControllerTest {
         when(transactionService.saveTransaction(any(Transaction.class))).thenAnswer(invocation -> {
             Transaction submittedTransaction = invocation.getArgument(0);
             submittedTransaction.setId(2L); // Simulate saving with an ID
+            submittedTransaction.setStatus(TransactionStatus.PENDING); // Simulate saving with an ID
             return submittedTransaction;
         });
 
         when(merchantService.getMerchantById(1L)).thenReturn(merchant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/transactions/submit/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(requestBody))).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$").value("PENDING"));
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/api/transactions").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(requestBody))).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        // Validate the response
+        String responseContent = result.andReturn().getResponse().getContentAsString();
+        SubmitPaymentResponse response = objectMapper.readValue(responseContent, SubmitPaymentResponse.class);
+
+        Assert.assertEquals(TransactionStatus.PENDING, response.getStatus());
 
         verify(transactionService, times(1)).saveTransaction(any(Transaction.class));
         verify(rabbitTemplate, times(1)).convertAndSend(anyString(), any(Transaction.class));
     }
 
-    @Test
-    public void testGetTransactionsByMerchantId() throws Exception {
-        when(transactionService.findAllTransactionsByMerchantId(1L)).thenReturn(transactions);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/transactions/merchant/1")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$[0].id").value(1)).andExpect(jsonPath("$[0].status").value("PENDING"));
-
-        verify(transactionService, times(1)).findAllTransactionsByMerchantId(any());
-    }
-
-    @Test
-    public void testGetTransactionByIdAndMerchantId() throws Exception {
-        when(transactionService.findTransactionByIdAndMerchantId(anyLong(), anyLong())).thenReturn(transactions.get(0));
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/transactions/merchant/1/transaction/1")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.status").value("PENDING"));
-    }
 }

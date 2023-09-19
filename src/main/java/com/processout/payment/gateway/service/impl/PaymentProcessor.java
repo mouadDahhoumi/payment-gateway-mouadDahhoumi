@@ -33,7 +33,6 @@ public class PaymentProcessor implements IPaymentProcessor {
     public void processPayment(Transaction transaction) {
         int currentAttempt = 0;
         boolean success = false;
-
         BankResponse bankResponse = BankResponse.builder().build();
         while (currentAttempt < MAX_RETRIES && !success) {
             logger.info(String.format("Processing started for transaction with id: %d", transaction.getId()));
@@ -44,13 +43,14 @@ public class PaymentProcessor implements IPaymentProcessor {
             } else if (bankResponse.getStatus() == DECLINED && bankResponse.getDeclineReason().equals(NETWORK_FAILURE)) {
                 logger.info(String.format("Transaction with id %d failed due to a network failure. Retrying ...", transaction.getId()));
             } else {
+                logger.info(String.format("Transaction with id %d failed due to %s.", transaction.getId(), bankResponse.getDeclineReason()));
                 break;
             }
 
             currentAttempt++;
         }
 
-        if (!success) logger.info(String.format("Maximum retries reached. Operation failed for transaction with id: %d", transaction.getId()));
+        if (!success && bankResponse.getDeclineReason().equals(NETWORK_FAILURE)) logger.info(String.format("Maximum retries reached. Operation failed for transaction with id: %d", transaction.getId()));
         transactionService.updateTransaction(transaction.getId(), bankResponse.getStatus(), bankResponse.getOperationDate(), bankResponse.getDeclineReason());
         logger.info(String.format("Processing ended for transaction with id: %d", transaction.getId()));
     }

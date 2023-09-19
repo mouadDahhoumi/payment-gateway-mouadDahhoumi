@@ -1,9 +1,15 @@
 package com.processout.payment.gateway.utils;
 
+import com.processout.payment.gateway.dto.GetTransactionResponse;
+import com.processout.payment.gateway.dto.SubmitPaymentRequestBody;
 import com.processout.payment.gateway.model.CardDetails;
+import com.processout.payment.gateway.model.Merchant;
 import com.processout.payment.gateway.model.Transaction;
 
+import java.util.Date;
 import java.util.function.Function;
+
+import static com.processout.payment.gateway.model.TransactionStatus.PENDING;
 
 public class Utils {
 
@@ -52,5 +58,17 @@ public class Utils {
         }
 
         return transaction;
+    }
+
+    public static CardDetails extractCardDetails(SubmitPaymentRequestBody body) {
+        return CardDetails.builder().ccv(body.getCcv()).cardNumber(body.getCardNumber()).expiryMonth(body.getExpiryMonth()).expiryYear(body.getExpiryYear()).owner(body.getOwner()).build();
+    }
+
+    public static GetTransactionResponse mapTransactionToGetTransactionResponse(Transaction transaction) {
+        return GetTransactionResponse.builder().transactionId(transaction.getId()).amount(transaction.getAmount()).currency(transaction.getCurrency()).declineReason(transaction.getDeclineReason()).transactionDate(transaction.getTransactionDate()).submissionDate(transaction.getSubmissionDate()).status(transaction.getStatus()).cardDetails(transaction.getCardDetails()).build();
+    }
+
+    public static Transaction mapSubmitRequestBodyToTransaction(SubmitPaymentRequestBody body, Merchant merchant, CardDetails cardDetails) {
+        return Transaction.builder().amount(body.getAmount()).merchant(merchant).cardDetails(cardDetails).status(PENDING).submissionDate(new Date()).currency(body.getCurrency()).build();
     }
 }

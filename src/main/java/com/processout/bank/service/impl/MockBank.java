@@ -30,11 +30,11 @@ public class MockBank implements IBank {
 
         TransactionStatus status = getRandom(statuses);
         if (status == ACCEPTED) {
-            return BankResponse.builder().status(ACCEPTED).operationDate(new Date()).build();
+            return BankResponse.builder().transactionId(transaction.getId()).status(ACCEPTED).operationDate(new Date()).build();
         }
 
         String declineReason = getRandom(DECLINE_REASONS);
-        return BankResponse.builder().status(DECLINED).declineReason(declineReason).operationDate(new Date()).build();
+        return BankResponse.builder().transactionId(transaction.getId()).status(DECLINED).declineReason(declineReason).operationDate(new Date()).build();
     }
 
     public <T> T getRandom(List<T> list) {

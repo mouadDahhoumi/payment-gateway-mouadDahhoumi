@@ -3,6 +3,7 @@ package com.processout.payment.gateway.controller;
 import com.processout.payment.gateway.model.Merchant;
 import com.processout.payment.gateway.service.IMerchantService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createMerchant(@RequestBody Merchant merchant) {
+    public ResponseEntity<Merchant> createMerchant(@RequestBody @Valid Merchant merchant) {
         Merchant savedMerchant = merchantService.saveMerchant(merchant);
         return ResponseEntity.created(URI.create("/api/merchants/" + savedMerchant.getId())).build();
     }

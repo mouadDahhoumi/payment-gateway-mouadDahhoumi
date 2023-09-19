@@ -21,6 +21,7 @@ public class BankResponse {
     public static final List<String> DECLINE_REASONS = List.of(CANCELED_CARD, EXPIRED_CARD, LACK_OF_FUND, //
             INCORRECT_PAYMENT_INFORMATION, UNVERIFIED_CUSTOMER);
 
+    private Long transactionId;
     private TransactionStatus status;
     private Date operationDate;
     private String declineReason;
