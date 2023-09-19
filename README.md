@@ -81,7 +81,7 @@ This section documents the endpoints to process transactions and retrieve their 
 
 ## Register Merchant
 
-Process a transaction by providing payment details.
+Register a merchant by providing a name.
 
 - **URL**: `/api/merchants`
 - **Method**: `POST`
