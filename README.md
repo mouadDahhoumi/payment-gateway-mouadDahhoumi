@@ -332,3 +332,11 @@ The choice of cloud services depends on budget, and familiarity with cloud platf
   -  Amazon RDS (Relational Database Service): RDS offers managed database services for various relational databases such as MySQL, PostgreSQL, SQL Server, and Oracle. It provides features like automated backups, high availability, and scalability.
     
 **Kubernetes (K8s)**: Kubernetes is a container orchestration platform that can run Spring Boot applications and RabbitMQ in containers. It can be deployed to AWS.
+
+## Bonus points
+- Using an event-driven architecture with rabbitmq to process transacction events asynchronously, which can significantly improve system responsiveness and throughput and guarantee a real-time processing.
+- Implemented the Luhn algorithm for card number validation.
+- Provided a Dockerfile for the Spring app, Docker Compose file to run a multi container app and scripts to build and run automatically.
+- Implemented a retry policy in the Payment Processor in order to retry the process if confronted to network issues.
+- Provided some additional endpoints to gain insights about the transactions such as the bank approval rate, which is a crucial performance metric for payment processing.
+- Logging using Log4j 
