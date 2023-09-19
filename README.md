@@ -339,4 +339,5 @@ The choice of cloud services depends on budget, and familiarity with cloud platf
 - Provided a Dockerfile for the Spring app, Docker Compose file to run a multi container app and scripts to build and run automatically.
 - Implemented a retry policy in the Payment Processor in order to retry the process if confronted to network issues.
 - Provided some additional endpoints to gain insights about the transactions such as the bank approval rate, which is a crucial performance metric for payment processing.
+- Externalized many values in the configuration file (application.properties) such as the name and the credentials of the queue, max retries allowed by the PaymentProcessor etc. This is crucial when considering different environments
 - Logging using Log4j 
