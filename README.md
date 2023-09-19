@@ -339,6 +339,8 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 - Introduce JWT for Authentication and especially Authorization since we are now required to provide the merchanId in every request body
 - Set up Continuous Integration (CI) for this Spring project on GitHub, (we can use GitHub Actions)
 - Implement robust error handling mechanisms for the event driven architecture
+- For now, tha app uses an in memory database (H2) that mimics a traditional sql db. It would be better if we host a proper sql db in a container.
+- Separating the consumer app and run it on its own container and environment should give more flexibilty and scalability. 
 - Increase test coverage
 
 ## Cloud technologies
