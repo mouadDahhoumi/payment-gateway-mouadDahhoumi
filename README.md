@@ -30,9 +30,7 @@ docker-compose up
 ```
 
 - The API can be accessed at http://localhost:8080
-- The Swagger page can be accessed at http://localhost:8080/swagger-ui/index.html#/. It provides a description of the API using the OpenAPI Specification. It also provides a web-based interface where users can explore and test API endpoints
-
-
+- The Swagger page can be accessed at http://localhost:8080/swagger-ui/index.html#/. It provides a description of the API using the OpenAPI Specification. It also provides a web-based interface where one can test API endpoints
 
 # Project structure
 
