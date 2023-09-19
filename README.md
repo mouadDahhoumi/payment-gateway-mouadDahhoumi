@@ -313,6 +313,20 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 ```
 
 ## Assumptions
+- It's assumed that the Bank can provide a response within a reasonable timeframe, typically in a matter of seconds. This is especially important for online purchases and point-of-sale transactions. This why the bank in this app is mocked so that can it can provide a response from 1 to 10 seconds.
+- The BankService should have mechanisms in place to handle timeouts effectively. For example, if a response is not received within a specified time, the service may retry the request or return an appropriate error code. In the context of this application, the bank doesn't handles retries and only send a responde indicating a network failure.
+- In this implementation, It was assumed that the bank can provide these decline reasons:
+
+| Decline Code                   | Decline Text                  |
+|--------------------------------|-------------------------------|
+| CANCELED_CARD                  | Canceled card                 |
+| EXPIRED_CARD                   | Expired card                  |
+| LACK_OF_FUND                   | Lack of fund                  |
+| INCORRECT_PAYMENT_INFORMATION  | Incorrect payment information |
+| UNVERIFIED_CUSTOMER            | Unverified customer           |
+| NETWORK_FAILURE                | Network failures or timeouts  |
+
+- The bank randomly pick if the transaction is Accepted or Declined. If declined, one of these decline reasons is chosen. We can add more of the same reason in the DECLINE_REASONS array so that the reason has a higher probability for being selected (for testing purposes). The same logic can be applied to wether a transaction is accepted or refused
 
 ## Areas for improvement
 
