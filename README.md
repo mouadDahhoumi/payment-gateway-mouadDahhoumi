@@ -327,9 +327,11 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 | NETWORK_FAILURE                | Network failures or timeouts  |
 
 - The bank randomly pick if the transaction is Accepted or Declined. If declined, one of these decline reasons is chosen. We can add more of the same reason in the DECLINE_REASONS array so that the reason has a higher probability for being selected (for testing purposes). The same logic can be applied to wether a transaction is accepted or refused
+- The PaymentProcess will retry the processing of transaction if it faces a Network Failure code from the bank. It is considered that Network Failure is a soft decline so it is okay to retry. Theses policies can easily be defined in the application 
 - It is assumed that the bank cannot intercat with the app database. The PaymentProcessor is the bridge beetween the app and the bank
 - Assuming the app will intercat with different banks, an interface IBank is provided. It is a contract that should allow multiple banks implementation
 - The time it takes to process a payment can vary significantly based on several factors, so an event driven architecture is suitable as it reduces the need for synchronous blocking calls and improve system responsiveness.
+
 
 ## Areas for improvement
 
