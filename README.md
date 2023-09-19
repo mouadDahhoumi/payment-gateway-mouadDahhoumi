@@ -85,8 +85,8 @@ This section documents the endpoints to process transactions and retrieve their 
 
 Process a transaction by providing payment details.
 
-- **URL**: "/api/merchants
-- **Method**: POST
+- **URL**: `/api/merchants`
+- **Method**: `POST`
 
 ### Request
 
@@ -98,9 +98,9 @@ Example Request Body:
 ```
 ### Response
 
-**Status Codes**:
-`201 Created` - The transaction is saved to the db and the payment processor will process it.
-`400 Bad Request` - Invalid request format.
+- **Status Codes**:
+    - `201 Created` - The transaction is saved to the db and the payment processor will process it.
+    - `400 Bad Request` - Invalid request format.
 ### Successful Response (201 OK)
 
 **Response Header**:
@@ -110,8 +110,8 @@ Example Request Body:
 ## Process Transaction
 Process a transaction by providing payment details.
 
-- **URL**: "/api/transactions
-- **Method**: POST
+- **URL**: `/api/transactions`
+- **Method**: `POST`
 
 ### Request
 
@@ -130,11 +130,11 @@ Example Request Body:
 ```
 ### Response
 
-**Status Codes**:
-`200 OK` - The transaction is saved to the db and the payment processor will process it.
-`401 Unauthorized`  - merchnat with merchantId is not found.
-`400 Bad Request` - Invalid request format.
-`500 Internal Server Error` - Unexpected server error
+- **Status Codes**:
+    - `200 OK` - The transaction is saved to the db and the payment processor will process it.
+    - `401 Unauthorized`  - merchnat with merchantId is not found.
+    - `400 Bad Request` - Invalid request format.
+    - `500 Internal Server Error` - Unexpected server error
 
 ### Successful Response (200 OK)
 ```json
@@ -146,24 +146,23 @@ Example Request Body:
 
 ### Success response payload
 
-Field	Description	Values
-transactionId	transaction identifier	long
-status	current status of the transaction	Approved, Declined, Pending
-Retrieve Transaction Details
+| Field         | Description                       | Values                      |
+|---------------|-----------------------------------|-----------------------------|
+| transactionId | transaction identifier            | long                        |
+| status        | current status of the transaction | Approved, Declined, Pending |
 
 ## Retrieve details of a previously made transaction by providing the transaction ID and the merchantId in a request body.
 
-- **URL**: "/api/transactions/{transactionId}
-- **Method**: GET
+- **URL**: `/api/transactions/{transactionId}`
+- **Method**: `GET`
 
 ### Request
 
-Parameters:
-
-transactionId (string, required) - The unique identifier of the transaction to retrieve.
-Request Body:
+- **Parameters:**
+    - `transactionId` (string: required) - The unique identifier of the transaction to retrieve.
+    
+- **Request Body**:
 ```json
-
 {
     "merchantId": 1
 }
@@ -171,14 +170,13 @@ Request Body:
 
 ### Response
 
-Status Codes:
-`200 OK` - Successful retrieval. Returns transaction details.
-`404 Not Found` - Transaction with the provided IDs does not exist.
-`400 Bad Request` - Invalid request format.
+- **Status Codes**:
+    - `200 OK` - Successful retrieval. Returns transaction details.
+    - `404 Not Found` - Transaction with the provided IDs does not exist.
+    - `400 Bad Request` - Invalid request format.
 
 Successful Response (200 OK)
 ```json
-
 {
     "merchantId": 1,
     "transactionId": 1,
@@ -200,28 +198,30 @@ Successful Response (200 OK)
 
 Success response payload
 
-Field	Description	Values
-transactionId	transaction identifier	long
-merchantId	merchant identifier	long
-amount	payment amount in the smalles denomination of the currency	double
-submissionDate	the date the merchant submitted the transaction to the	date
-transactionDate	the date of where the transaction processing ended	date
-currency	3 letter currency code	USD,EUR,GBP,JPY,CAD,AUD
-status	current status of the transaction	Approved, Declined, Pending
-declineReason	decline reason if status is Declined	string
-expiryMonth	expiry month of the card	integer
-expiryYear	expiry year of the card	integer
-cardNumber	masked card number	string
-ccv	three or four digits number"	string
-Retrieve All Transactions Details
+| Field           | Description                                                    | Values                      |
+|-----------------|----------------------------------------------------------------|-----------------------------|
+| transactionId   | Transaction id                                                 | long                        |
+| merchantId      | Merchant Id                                                    | long                        |
+| amount          | Payment amount                                                 | double                      |
+| submissionDate  | The date the merchant submitted the transaction to the gateway | date                        |
+| transactionDate | The date of when the transaction processing ended              | date                        |
+| currency        | 3 letter currency code                                         | USD,EUR,GBP,JPY,CAD,AUD     |
+| status          | Current status of the transaction                              | Approved, Declined, Pending |
+| declineReason   | Decline reason if status is Declined                           | string                      |
+| cardNumber      | maskedCardNumber                                               | string                      |
+| expiryMonth     | Expiry month of the card                                       | int                         |
+| expiryyear      | Expiry year of the card                                        | int                         |
+| ccv             | Three or four digits nuber                                     | string                      |
 
-## Retrieve details of a all transactions by providing the merchantId in the request body.
+## Retrieve All Transactions Details
+Retrieve details of a all transactions by providing the merchantId in the request body.
 
-URL: "/api/transactions
-Method: GET
+- **URL**: `/api/transactions`
+- **Method***: `GET`
 
 ### Request
-Body: JSON object representing the merchantId.
+- **Request Body**:
+    - JSON object representing the merchantId.
 
 ### Example Request Body:
 ```json
@@ -230,15 +230,17 @@ Body: JSON object representing the merchantId.
     "merchantId": 1
 }
 ```
-Response
 
-Status Codes:
-`200 OK` - Successful retrieval. Returns all transactions details.
-`404 Not Found` - No transaction was found for the provided merchantId.
-`400 Bad Request` - Invalid request format.
-Successful Response (200 OK)
+### Response
+
+- **Status Codes**:
+    - `200 OK` - Successful retrieval. Returns all transactions details.
+    - `404 Not Found` - No transaction was found for the provided merchantId.
+    - `400 Bad Request` - Invalid request format.
+
+### Successful Response (200 OK)
+
 ```json
-
 [
     {
         "transactionId": 1,
@@ -263,14 +265,15 @@ Successful Response (200 OK)
 
 Retrieve details of a all transactions by providing the merchantId in the request body.
 
-URL: "/api/transactions/pending|declined|approved
-Method: GET
+- **URL**: `/api/transactions/pending|declined|approved`
+- **Method**: `GET`
 These are three different endpoints, each one provide all the transactions with the desired status
 
-Request
+### Request
 
-Body: JSON object representing the merchantId.
-Example Request Body:
+- **Request Body**: JSON object representing the merchantId.
+
+### Example Request Body:
 ```json
 {
     "merchantId": 1
@@ -280,12 +283,13 @@ Example Request Body:
 ## Calculate revenue
 Calculate the revenue by suming the amounts of all accepted transactions.
 
-URL: "/api/transactions/revenue
-Method: GET
-Request
+- **URL**: `/api/transactions/revenue`
+- **Method**: `GET`
+### Request
 
 Body: JSON object representing the merchantId.
-Example Request Body:
+
+### Example Request Body:
 ```json
 {
     "merchantId": 1
@@ -294,12 +298,14 @@ Example Request Body:
 ## Calculate Bank Approval Rate
 Calculate the bank approval rate by assessing the ratio of accepetd transaction to the total number of transactions.
 
-URL: "/api/transactions/revenue
-Method: GET
-Request
+- **URL**: `/api/transactions/revenue`
+- **Method**: `GET`
 
-Body: JSON object representing the merchantId.
-Example Request Body:
+### Request
+
+- **Request Body**: JSON object representing the merchantId.
+
+### Example Request Body:
 ```json
 {
     "merchantId": 1
