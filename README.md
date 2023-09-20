@@ -326,15 +326,15 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 
 - The bank randomly picks if the transaction is Accepted or Declined. If declined, one of these decline reasons is chosen. We can add more of the same reason in the DECLINE_REASONS array so that the reason has a higher probability for being selected (for testing purposes). The same logic can be applied to wether a transaction is accepted or refused
 - The PaymentProcess will retry the processing of transaction if it faces a Network Failure code from the bank. It is considered that Network Failure is a soft decline so it is okay to retry. Theses policies can easily be defined in the application 
-- It is assumed that the bank cannot intercat with the app database. The PaymentProcessor is the bridge beetween the app and the bank
-- Assuming the app will intercat with different banks, an interface IBank is provided. It is a contract that should allow multiple banks implementation
+- It is assumed that the bank cannot interact with the app database. The PaymentProcessor is the bridge beetween the app and the bank
+- Assuming the app will interact with different banks, an interface IBank is provided. It is a contract that should allow multiple banks implementation
 - The time it takes to process a payment can vary significantly based on several factors, so an event driven architecture is suitable as it reduces the need for synchronous blocking calls and improve system responsiveness.
 
 
 ## Areas for improvement
 
 - Introduce a front end admin page that provides a UI to process payments and dashboards,
-- Introduce JWT for Authentication and especially Authorization since we are now required to provide the merchanId in every request body
+- Introduce JWT for Authentication and especially Authorization since we are now required to provide the merchantId in every request body
 - Set up Continuous Integration (CI) for this Spring project on GitHub, (we can use GitHub Actions)
 - Implement robust error handling mechanisms for the event driven architecture
 - For now, tha app uses an in memory database (H2) that mimics a traditional sql db. It would be better if we host a proper sql db in a container.
@@ -343,7 +343,7 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 
 ## Cloud technologies
 
-The choice of cloud services depends on budget, and familiarity with cloud platforms. Here are some popular cloud technologies that might be considered for hosting this app
+The choice of cloud services depends on budget, and familiarity with cloud providers. Here are some popular cloud technologies that might be considered for hosting this app
 
 **Amazon Web Services (AWS)**:
   -  Amazon EC2: You can use Amazon Elastic Compute Cloud (EC2) to deploy virtual servers where you can run your Spring Boot application and RabbitMQ.
