@@ -8,9 +8,8 @@ Processout Take-home coding challenge
 This app is bundled with a build and run script to build the API and launch the API with a RabbitMQ Docker container.
 To run, use:https://github.com/mouadDahhoumi/payment-gateway-mouadDahhoumi/blob/master/README.md
 ```powershell
-chmod +x scripts/build-and-run.sh
-
-./scripts/build-and-run.sh
+chmod +x build-and-run.sh
+./build-and-run.sh
 ```
 
 To build and run manually:
