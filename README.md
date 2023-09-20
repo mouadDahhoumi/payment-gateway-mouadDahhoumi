@@ -1,10 +1,6 @@
 # payment-gateway-mouadDahhoumi
 Processout Take-home coding challenge 
 
-
-
-Processout Take-home coding challenge
-
 # How to run
 
 ## Build scripts
