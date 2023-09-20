@@ -10,7 +10,7 @@ Processout Take-home coding challenge
 ## Build scripts
 
 This app is bundled with a build and run script to build the API and launch the API with a RabbitMQ Docker container.
-To run, use:
+To run, use:https://github.com/mouadDahhoumi/payment-gateway-mouadDahhoumi/blob/master/README.md
 ```powershell
 chmod +x scripts/build-and-run.sh
 
@@ -353,7 +353,7 @@ The choice of cloud services depends on budget, and familiarity with cloud provi
 **Kubernetes (K8s)**: Kubernetes is a container orchestration platform that can run Spring Boot applications and RabbitMQ in containers. It can be deployed to AWS.
 
 ## Bonus points
-- Using an event-driven architecture with rabbitmq to process transacction events asynchronously, which can significantly improve system responsiveness and throughput and guarantee a real-time processing.
+- Using an event-driven architecture with rabbitmq to process transcction events asynchronously, which can significantly improve system responsiveness and throughput and guarantee a real-time processing.
 - Implemented the Luhn algorithm for card number validation.
 - Provided a Dockerfile for the Spring app, Docker Compose file to run a multi container app and scripts to build and run automatically.
 - Implemented a retry policy in the Payment Processor in order to retry the process if confronted to network issues.
