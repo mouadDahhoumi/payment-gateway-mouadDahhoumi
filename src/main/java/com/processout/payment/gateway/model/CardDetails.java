@@ -1,7 +1,6 @@
 package com.processout.payment.gateway.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.processout.payment.gateway.validation.ValidCreditCardDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.Valid;
