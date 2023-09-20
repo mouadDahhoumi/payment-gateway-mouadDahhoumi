@@ -325,6 +325,7 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 - It is assumed that the bank cannot interact with the app database. The PaymentProcessor is the bridge beetween the app and the bank
 - Assuming the app will interact with different banks, an interface IBank is provided. It is a contract that should allow multiple banks implementation
 - The time it takes to process a payment can vary significantly based on several factors, so an event driven architecture is suitable as it reduces the need for synchronous blocking calls and improve system responsiveness.
+- The validation of the card follow specific rules. This task was accomplished by using built-in java bean validation annontations such as @NotNull @NotBlank @Min @Min. In addition, some new custon annotation such as @ValidCardNumber and @ValidCardDate were implemented. @ValidCardNumber uses Luhn algorithm
 
 
 ## Areas for improvement
@@ -335,7 +336,7 @@ Calculate the bank approval rate by assessing the ratio of accepetd transaction 
 - Implement robust error handling mechanisms for the event driven architecture
 - For now, tha app uses an in memory database (H2) that mimics a traditional sql db. It would be better if we host a proper sql db in a container.
 - Separating the consumer app and run it on its own container and environment should give more flexibilty and scalability. 
-- Increase test coverage
+- Increase test coverage. For now, these integration tests that are available are: Submit payment with a valid card number, with invalid card number, with expired card number and also with an unregistered merchant. Services and utility classes (custom validator) are also unit tested
 
 ## Cloud technologies
 
@@ -355,4 +356,5 @@ The choice of cloud services depends on budget, and familiarity with cloud provi
 - Implemented a retry policy in the Payment Processor in order to retry the process if confronted to network issues.
 - Provided some additional endpoints to gain insights about the transactions such as the bank approval rate, which is a crucial performance metric for payment processing.
 - Externalized many values in the configuration file (application.properties) such as the name and the credentials of the queue, max retries allowed by the PaymentProcessor etc. This is crucial when considering different environments
-- Logging using Log4j 
+- Logging using Log4j
+- Made custom validation annotation for card details.
