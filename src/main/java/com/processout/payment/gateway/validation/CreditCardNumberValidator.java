@@ -6,14 +6,15 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CreditCardNumberValidator implements ConstraintValidator<ValidCardNumber, String> {
     public boolean isValid(String cardNumber, ConstraintValidatorContext c){
-        if (StringUtils.isBlank(cardNumber)) return false;
-        String cleanedCardNumber = cardNumber.replaceAll("\\s", "");
-        return isValidCardNumber(cleanedCardNumber);
+        return isValidCardNumber(cardNumber);
     }
 
 
     // Luhn Algorithm
     public static boolean isValidCardNumber(String cardNo) {
+        if (StringUtils.isBlank(cardNo)) return false;
+
+        cardNo = cardNo.replaceAll("\\s", "");
         int nDigits = cardNo.length();
 
         int nSum = 0;

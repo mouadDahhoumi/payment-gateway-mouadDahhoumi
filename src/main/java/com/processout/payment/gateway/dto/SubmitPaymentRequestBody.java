@@ -2,6 +2,7 @@ package com.processout.payment.gateway.dto;
 
 import com.processout.payment.gateway.model.CurrencyEnum;
 import com.processout.payment.gateway.validation.ValidCardNumber;
+import com.processout.payment.gateway.validation.ValidCreditCardDate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Valid
+@ValidCreditCardDate
 public class SubmitPaymentRequestBody {
     @NotNull
     private Long merchantId;
