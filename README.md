@@ -1,4 +1,4 @@
-# payment-gateway-mouadDahhoumi
+# payment-gateway
 Processout Take-home coding challenge 
 
 # How to run
@@ -6,7 +6,8 @@ Processout Take-home coding challenge
 ## Build scripts
 
 This app is bundled with a build and run script to build the API and launch the API with a RabbitMQ Docker container.
-To run, use:https://github.com/mouadDahhoumi/payment-gateway-mouadDahhoumi/blob/master/README.md
+To run, use:
+
 ```powershell
 chmod +x build-and-run.sh
 ./build-and-run.sh
