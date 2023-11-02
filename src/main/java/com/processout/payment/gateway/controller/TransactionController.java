@@ -44,10 +44,17 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+
         CardDetails cardDetails = Utils.extractCardDetails(body);
+
         Transaction submittedTransaction = Utils.mapSubmitRequestBodyToTransaction(body, merchant, cardDetails);
+
+
         Transaction savedTransaction = transactionService.saveTransaction(submittedTransaction);
+
+
         rabbitTemplate.convertAndSend(topic, savedTransaction);
+
         return ResponseEntity.ok(SubmitPaymentResponse.builder().transactionId(savedTransaction.getId()).status(savedTransaction.getStatus()).build());
     }
 

@@ -23,7 +23,7 @@ public class CreditCardNumberValidator implements ConstraintValidator<ValidCardN
 
             int d = cardNo.charAt(i) - '0';
 
-            if (isSecond == true) d = d * 2;
+            if (isSecond) d = d * 2;
 
             // We add two digits to handle
             // cases that make two digits

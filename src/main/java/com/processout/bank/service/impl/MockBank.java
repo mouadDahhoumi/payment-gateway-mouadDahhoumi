@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import static com.processout.payment.gateway.dto.BankResponse.DECLINE_REASONS;
+import static com.processout.payment.gateway.dto.BankResponse.NETWORK_FAILURE;
 import static com.processout.payment.gateway.model.TransactionStatus.ACCEPTED;
 import static com.processout.payment.gateway.model.TransactionStatus.DECLINED;
 
@@ -18,7 +18,7 @@ import static com.processout.payment.gateway.model.TransactionStatus.DECLINED;
 @Service
 public class MockBank implements IBank {
     private static final Random random = new Random();
-    private static final List<TransactionStatus> statuses = List.of(ACCEPTED, ACCEPTED, DECLINED, DECLINED);
+    private static final List<TransactionStatus> statuses = List.of(DECLINED, DECLINED, DECLINED);
 
     @Override
     public BankResponse processTransaction(Transaction transaction) {
@@ -29,11 +29,12 @@ public class MockBank implements IBank {
         }
 
         TransactionStatus status = getRandom(statuses);
+
         if (status == ACCEPTED) {
             return BankResponse.builder().transactionId(transaction.getId()).status(ACCEPTED).operationDate(new Date()).build();
         }
 
-        String declineReason = getRandom(DECLINE_REASONS);
+        String declineReason = getRandom(List.of(NETWORK_FAILURE));
         return BankResponse.builder().transactionId(transaction.getId()).status(DECLINED).declineReason(declineReason).operationDate(new Date()).build();
     }
 
